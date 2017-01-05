@@ -4,7 +4,7 @@
 
     define('SCHEME', 'http://');
 
-    define('URL_YOUDU_API', 'intr.youdu.im'); // 请填写有度服务器地址
+    define('URL_YOUDU_API', 'test.com'); // 请填写有度服务器地址
 
     define('API_GET_TOKEN', SCHEME . URL_YOUDU_API . '/v3/api/jgapp/ent.app.accesstoken.gen'); // 获取token api
 
