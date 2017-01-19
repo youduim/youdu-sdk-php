@@ -80,23 +80,23 @@ class YdApi
 	{
 		$param = $this->getParam($encrypt_msg);
 		$rsp = $this->http->Post($url, $param);
-		$body = json_decode($rsp['body']);
-		if ($body->errcode == 0) {
-			list($errcode, $tk) = $this->DecryptMsg($body->encrypt);
-			if ($errcode != 0) {
-				return ErrorCode::$DecryptAESError;
+		$body = json_decode($rsp['body'], true);
+		if ($body['errcode'] == 0) {
+			list($errcode, $tk) = $this->DecryptMsg($body['encrypt']);
+			if ($errcode !== 0) {
+				return [ErrorCode::$DecryptAESError, ''];
 			}
 			$m = json_decode($tk);
 			$this->accessToken = $m->accessToken;
-			return ErrorCode::$OK;
+			return [ErrorCode::$OK, $m->accessToken];
 		}
-		return $rsp->errcode;
+		return [$body->errcode, $body->errmsg];
 	}
 
 	/**
 	 * 发送信息
 	 * <ol>
-	 *    <li>提交 curl 获取 mediaId</li>
+	 *    <li>提交 curl 获取 对应接口返回结果</li>
 	 * </ol>
 	 *
 	 * @param $url string 应用API地址
@@ -106,14 +106,31 @@ class YdApi
 	 * @return  array
 	 * array[0] int 返回后台返回的错误码
 	 * array[1] string 返回后台返回的错误信息
+	 * array[2] object 搜索文件时，额外返回的文件信息
 	 */
-	public function Send($url, $encrypt)
+	public function Send($url, $param)
 	{
-		$param = $this->getParam($encrypt);
+		list($errcode, $encrypt) = $this->EncryptMsg($param);
+		if ($errcode !== 0) {
+			return ["errcode"=>$errcode, "errmsg"=>"加密失败"];
+		}
+		$p = $this->getParam($encrypt);
 		$u = $this->getTokenUrl($url);
-		$rsp = $this->http->Post($u, $param);
-		$body = json_decode($rsp['body']);
-		return [$body->errcode, $body->errmsg];
+		$rsp = $this->http->Post($u, $p);
+		if ($rsp['httpCode'] == 200) {
+			$body = json_decode($rsp['body'], true);
+			if ($url == API_SEARCH_FILE && $body['errcode'] === 0) {
+				list($errcode, $m) = $this->DecryptMsg($body['encrypt']);
+				if ($errcode !== 0){
+					$body['decrypt'] = -1;
+				} else{
+					$body['decrypt'] = json_decode($m);
+				}
+			}
+			return $body;
+		} else {
+			return ["errcode"=>ErrorCode::$IllegalHttpReq, "errmsg"=>"http request code ".$rsp['httpCode']];
+		}
 	}
 
 	/**
@@ -139,14 +156,14 @@ class YdApi
 		fwrite($myfile, $encrypt_file);
 		fclose($myfile);
 		
-		$param = ["file" => '@' . realpath($t) , "encrypt" => $encrypt];
+		$param = ["file" => '@' . realpath($t) , "encrypt" => $encrypt, "buin" => $this->buin, "appId" => $this->appId];
 		$rsp = $this->http->Upload($u, $param);
 		//删除临时文件
 		unlink($t);
 		if ($rsp->errcode == 0) {
 			list($errcode, $m) = $this->DecryptMsg($rsp->encrypt);
 			if ($errcode != 0){
-				return [$rsp->errcode, ''];
+				return [$errcode, ''];
 			}
 			return [ErrorCode::$OK, json_decode($m)->mediaId] ;
 		}
@@ -167,7 +184,7 @@ class YdApi
 	 */
 	public function DownloadFile($url, $encrypt, $savepath)
 	{
-		$param = ['encrypt' => $encrypt];
+		$param = $this->getParam($encrypt);
 		$u = $this->getTokenUrl($url);
 		$rsp = $this->http->Post($u, $param);
 
@@ -178,7 +195,7 @@ class YdApi
 		}
 		$fileInfo = json_decode($fileInfo);
 		list($errcode, $fileContent) = $this->DecryptMsg($rsp['body']);
-		if ($errcode != 0){
+		if ($errcode !== 0){
 			return $errcode;
 		}
 		$this->SaveFile($fileContent, $savepath, $fileInfo->name);

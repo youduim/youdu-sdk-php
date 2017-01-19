@@ -4,7 +4,7 @@
 
     define('SCHEME', 'http://');
 
-    define('URL_YOUDU_API', 'test.com'); // 请填写有度服务器地址
+    define('URL_YOUDU_API', '10.0.0.188:7080'); // 请填写有度服务器地址
 
     define('API_GET_TOKEN', SCHEME . URL_YOUDU_API . '/cgi/gettoken'); // 获取token api
 
@@ -14,11 +14,13 @@
 
     define('API_DOWNLOAD_FILE', SCHEME . URL_YOUDU_API . '/cgi/media/get'); // 文件下载API
 
-    define('BUIN', YOUR_BUIN);  //请填写企业总机号
+    define('API_SEARCH_FILE', SCHEME . URL_YOUDU_API . '/cgi/media/search'); // 文件搜索API
 
-    define('AESKEY', 'YOUR_AESKEY'); // 请填写企业应用回调用的AESKey
+    define('BUIN', 56565656);  //请填写企业总机号
 
-    define('APPID', 'YOUR_APPID'); // 请填写企业应用AppId
+    define('AESKEY', 'A0aWSqDL5SV4fafQl3OavoVPUn6sx7xNnD+1hOoTeWk='); // 请填写企业应用回调用的AESKey
+
+    define('APPID', 'yd06AB76EC519B4130A802224B4C60F689'); // 请填写企业应用AppId
 
     define('ACCESSTOKEN', ''); // 请填写企业应用回调Token
 

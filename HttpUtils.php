@@ -18,15 +18,16 @@ class HttpUtils
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  
         curl_setopt($ch, CURLOPT_HTTPHEADER, array( 
             'Content-Type: application/json',
-            'content-Length: ' . strlen(json_encode($data)))                                                                       
+            'content-Length: ' . strlen(json_encode($data))) 
         );        
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         $server_output = curl_exec ($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
         curl_close ($ch);
-        return ['header' => $header, 'body' => $body];
+        return ['header' => $header, 'body' => $body, 'httpCode' => $httpcode];
     }
 
     public function Upload($url, $data)

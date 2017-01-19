@@ -14,7 +14,7 @@ $encrypt = $post->encrypt;
 $get = $_GET;
 
 function save($mediaId) {
-
+    $result = '';
     global $ydapi;
 
     $result = $ydapi->EncryptMsg(time());
@@ -22,24 +22,40 @@ function save($mediaId) {
     if ($errcode == 0) {
         $result = $ydapi->GetToken(API_GET_TOKEN, $encrypt);
         if ($result == 0) {
-            // $txt .= "获取 token 成功\n";
+            $result .= "获取 token 成功\n";
         } else {
-            // $txt .= "获取 token 失败 errcode : $errcode \n";
+            $result .= "获取 token 失败 errcode : $errcode \n";
+            return $result;
         }
     }
 
     
     $msg = json_encode(['mediaId' => $mediaId]);
+
     list($errcode, $encrypt) = $ydapi->EncryptMsg($msg);
-    if ($errcode == 0) {
-        $result = $ydapi->DownloadFile(API_DOWNLOAD_FILE, $encrypt, SAVEPATH);
-        if ($result == 0) {
-            return "下载图片成功\n";
+    if ($errcode === 0) {
+
+        /*
+            搜索文件
+        */
+        list($errcode, $rsp) = $ydapi->Send(API_SEARCH_FILE, $encrypt);
+        if ($errcode === 0) {
+            $result .= "搜索文件成功 文件名: ". $rsp->name ."  文件大小: ". $rsp->size ."B <br/>";
         } else {
-            return "下载图片失败\n";
+            $result .= "搜索文件失败 errcode : $errcode <br/>";
+            return $result;
         }
-    } else {
-        return "保存文件失败 errcode: $errcode \n";
+        /*
+            保存文件
+        */
+        $errcode = $ydapi->DownloadFile(API_DOWNLOAD_FILE, $encrypt, SAVEPATH);
+        if ($errcode === 0) {
+            $result .= "下载图片成功\n";
+        } else {
+            $result .= "下载图片失败\n";
+        }
+    }else {
+        $result .= "保存文件失败 errcode: $errcode \n";
     }
 }
 
