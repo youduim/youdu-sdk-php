@@ -11,7 +11,6 @@
 ## 依赖模块
 
 - cURL
-- javatuples 1.2
 - Mcrypt
 
 ## 运行前配置
