@@ -135,3 +135,15 @@ if ($rsp["errcode"] === 0) {
     echo "发送图文信息失败 errcode: $errcode, errmsg: $rsp<br/>";
     exit();
 }
+
+/*
+    发送应用弹窗
+*/
+$msg = '{"toUser": "dico.zhang","toDept": "","popWindow":{"url": "http://youdu.im","tip": "","title": "应用弹窗","width": 400,"height": 400,"duration": -1,"position": 3,"notice_id": "{202D2081-5ADA-4FE5-81B8-53D88E1FD016}","pop_mode": 2}}';
+$rsp = $ydapi->Send(API_SEND_MSG, $msg);
+if ($rsp["errcode"] === 0) {
+    echo '发送应用弹窗成功<br/>';
+} else {
+    echo "发送应用弹窗失败 errcode: $errcode, errmsg: $rsp<br/>";
+    exit();
+}
