@@ -1,16 +1,16 @@
 {
-    "name": "youduphp/youdu",
+    "name": "youduim/youdu-sdk-php",
     "description": "The php sdk for youdu.",
     "type": "library",
     "keywords": [
         "php",
         "youdu"
     ],
-    "homepage": "https://github.com/youduphp/youdu",
+    "homepage": "https://github.com/youduim/youdu-sdk-php",
     "license": "MIT",
     "authors": [{
-        "name": "huangdijia",
-        "email": "huangdijia@gmail.com"
+        "name": "youdu.im",
+        "email": "support@xinda.im"
     }],
     "require": {
         "php": ">=8.0",

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 /**
- * This file is part of youduphp/youdu.
+ * This file is part of youduim/youdu-sdk-php.
  *
- * @link     https://github.com/youduphp/youdu
- * @document https://github.com/youduphp/youdu/blob/main/README.md
- * @contact  huangdijia@gmail.com
+ * @link     https://github.com/youduim/youdu-sdk-php
+ * @document https://github.com/youduim/youdu-sdk-php/blob/v2.0.0/README.md
+ * @contact  support@xinda.im
  */
 $header = <<<'EOF'
-This file is part of youduphp/youdu.
+This file is part of youduim/youdu-sdk-php.
 
-@link     https://github.com/youduphp/youdu
-@document https://github.com/youduphp/youdu/blob/main/README.md
-@contact  huangdijia@gmail.com
+@link     https://github.com/youduim/youdu-sdk-php
+@document https://github.com/youduim/youdu-sdk-php/blob/v2.0.0/README.md
+@contact  support@xinda.im
 EOF;
 
 return (new PhpCsFixer\Config())
